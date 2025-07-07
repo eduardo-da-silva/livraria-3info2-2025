@@ -1,6 +1,6 @@
 <script setup>
 import '@passageidentity/passage-elements/passage-auth'
-const appId = 'GKj1efF61W4xT1JFyDuKPfsK'
+const appId = import.meta.env.VITE_PASSAGE_APP_ID
 </script>
 
 <template>
@@ -9,3 +9,4 @@ const appId = 'GKj1efF61W4xT1JFyDuKPfsK'
     <passage-auth :app-id="appId"></passage-auth>
   </div>
 </template>
+J

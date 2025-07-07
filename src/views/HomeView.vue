@@ -8,24 +8,14 @@ const categoria = reactive({
   descricao: '',
   id: null,
 })
-const token = ref('')
-const user = ref({})
+const filtro = ref('')
 
 onMounted(async () => {
-  token.value = localStorage.getItem('psg_auth_token')
-  const response = await axios.get(
-    'https://livraria-marrcandre-2024.onrender.com/api/usuarios/me/',
-    {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-    },
-  )
-  user.value = response.data
+  await axios.get('usuarios/me/')
   try {
     await categoriaStore.buscarCategorias()
   } catch (error) {
-    console.error('Erro ao buscar categorias COMPO:', error)
+    console.error('Erro ao buscar categorias:', error)
     alert(error)
   }
 })
@@ -43,6 +33,14 @@ function prepararEdicao(categoriaSelecionada) {
   categoria.descricao = categoriaSelecionada.descricao
   categoria.id = categoriaSelecionada.id
 }
+
+function irParaPagina(pagina) {
+  categoriaStore.buscarCategorias(pagina, filtro.value)
+}
+
+function buscarComFiltro() {
+  categoriaStore.buscarCategorias(1, filtro.value)
+}
 </script>
 
 <template>
@@ -54,6 +52,8 @@ function prepararEdicao(categoriaSelecionada) {
       <input v-model="categoria.descricao" id="descricao" type="text" />
       <button @click="salvarCategoria(categoria)">Adicionar</button>
     </div>
+    <hr />
+    <input type="text" v-model="filtro" /> <button @click="buscarComFiltro">Filtrar</button>
     <ul>
       <li
         v-for="categoria in categoriaStore.categorias"
@@ -63,5 +63,37 @@ function prepararEdicao(categoriaSelecionada) {
         {{ categoria.descricao }} ({{ categoria.id }})
       </li>
     </ul>
+    <div class="paginacao">
+      <span
+        v-for="pagina in categoriaStore.meta.total_pages"
+        :key="pagina"
+        @click="irParaPagina(pagina)"
+        :class="{ active: categoriaStore.meta.page === pagina }"
+      >
+        {{ pagina }}</span
+      >
+    </div>
   </section>
 </template>
+
+<style scoped>
+.paginacao {
+  margin-left: 20px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+
+  & span {
+    cursor: pointer;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    &.active {
+      background-color: #007bff;
+      color: white;
+    }
+  }
+}
+</style>

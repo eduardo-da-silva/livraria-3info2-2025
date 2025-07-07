@@ -12,8 +12,8 @@ export const useCategoriaStore = defineStore('categoria', () => {
     total_pages: 0,
   })
 
-  async function buscarCategorias() {
-    const data = await categoriaService.listarCategorias()
+  async function buscarCategorias(pagina = 1, filtro = '') {
+    const data = await categoriaService.listarCategorias(pagina, filtro)
     state.value.categorias = data.results
     state.value.total_pages = data.total_pages
     state.value.page = data.page
@@ -31,6 +31,11 @@ export const useCategoriaStore = defineStore('categoria', () => {
   }
 
   const categorias = computed(() => state.value.categorias)
+  const meta = computed(() => ({
+    page: state.value.page,
+    page_size: state.value.page_size,
+    total_pages: state.value.total_pages,
+  }))
 
-  return { categorias, buscarCategorias, salvarCategoria }
+  return { categorias, meta, buscarCategorias, salvarCategoria }
 })

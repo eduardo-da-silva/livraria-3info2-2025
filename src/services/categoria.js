@@ -1,11 +1,9 @@
 import axios from 'axios'
 
 class CategoriaService {
-  async listarCategorias() {
+  async listarCategorias(pagina = 1, filtro = '') {
     try {
-      const response = await axios.get(
-        'https://livraria-marrcandre-2024.onrender.com/api/categorias/',
-      )
+      const response = await axios.get(`categorias/?page=${pagina}&search=${filtro}`)
       return response.data
     } catch (error) {
       console.error('Error fetching categories:', error)
@@ -15,15 +13,7 @@ class CategoriaService {
 
   async salvarCategoria(categoria) {
     try {
-      await axios.patch(
-        `https://livraria-marrcandre-2024.onrender.com/api/categorias/${categoria.id}/`,
-        categoria,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('psg_auth_token')}`,
-          },
-        },
-      )
+      await axios.patch(`categorias/${categoria.id}/`, categoria)
       return Promise.resolve()
     } catch (error) {
       console.error('Error saving category API:', error)
