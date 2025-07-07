@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCategoriaStore } from '@/stores/categoria'
 import axios from 'axios'
+const router = useRouter()
 
 const categoriaStore = useCategoriaStore()
 const categoria = reactive({
@@ -41,6 +43,10 @@ function irParaPagina(pagina) {
 function buscarComFiltro() {
   categoriaStore.buscarCategorias(1, filtro.value)
 }
+
+function verLivros(categoria) {
+  router.push({ name: 'livros-categoria', params: { categoria } })
+}
 </script>
 
 <template>
@@ -58,9 +64,10 @@ function buscarComFiltro() {
       <li
         v-for="categoria in categoriaStore.categorias"
         :key="categoria.id"
-        @click="prepararEdicao(categoria)"
+        @click="verLivros(categoria.descricao)"
       >
         {{ categoria.descricao }} ({{ categoria.id }})
+        <button @click="prepararEdicao(categoria)">Editar</button>
       </li>
     </ul>
     <div class="paginacao">
